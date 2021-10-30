@@ -2,7 +2,7 @@
 This repository houses the models associated with the _kipple_ project. It is large! ~500MB.
 
 ## Models ##
-Each model is a gradient-boosted decision tree (GBDT) implemented in LightGBM, similar to [EMBER](https://github.com/elastic/ember). In total, there are 16 kipple models; these models are described in detail in the kipple presentation and paper, though we summarize them below.
+Each model is a gradient-boosted decision tree (GBDT) implemented in LightGBM, similar to [EMBER](https://github.com/elastic/ember). In total, there are 16 kipple models; these models are described in detail in the kipple presentation and paper, though we summarize them below. Note that each model is stored as a gzip'd file for space saving reasons.
 
 ### Initial Model ###
 The initial model -- ```initial.txt.gz``` -- was trained only on the EMBER data following the EMBER labels.
@@ -48,3 +48,32 @@ The following table summarizes each of the models:
 | variants_misc | all variants | unknown |
 
 ## Usage ##
+You can use the ```evaluate_files.py``` script to use the models to evaluate a folder containing malicious PE files. By default it hardcodes the initial, variants_benign, and msf_benign models, but you can swap these out with different thresholds. Example usage:
+```
+(base) root@woof:/exes/kipple/kipple-models# python evaluate_files.py 
+Finished loading model, total used 1000 iterations
+Finished loading model, total used 1000 iterations
+Finished loading model, total used 500 iterations
+Checking /exes/mlsec2019/...
+Total evaluated: 594
+Total malicious: 532
+Accuracy: 0.8956228956228957
+```
+
+What if we want to use the models on the kipple-data? We have a script for that! ```evaluate_kipple_data.py``` contains an example. To run this script, first make sure you unzip the kipple data files. E.g.:
+```
+(base) root@woof:/exes/kipple/kipple-data/data# gunzip msf_normal.dat.gz
+```
+Now we run the file:
+```
+(base) root@woof:/exes/kipple/kipple-models# python evaluate_kipple_data.py 
+Finished loading model, total used 1000 iterations
+Finished loading model, total used 1000 iterations
+Total evaluated: 5884
+Total malicious: 928
+Accuracy: 0.15771583956492183
+```
+Certainly room for improvement!
+
+##  What about thresholds? ##
+Thresholds define the cutoff for when the model's score should be considered as malicious or benign. There's lots of good ways to define this, but really it's dependent on your application. 
