@@ -79,3 +79,8 @@ Certainly room for improvement!
 
 ##  What about thresholds for each model? ##
 Thresholds define the cutoff for when the model's score should be considered as malicious or benign. There's lots of good ways to define this, but really it's dependent on your application. The thresholds.md file show the cutoffs for each model using the EMBER benign dataset to scope them. If you want to create your own thresholds yourself, check out the ```get_individual_thresholds.py``` script in the main kipple directory for how to do the same for your own models.
+
+## What about thresholds for a portfolio? ##
+That's harder! Intuition would be to select a false positive rate and then select the threshold for each model that matches that rate; e.g., if we want 1% FP, then select the cutoff for 1% FP for each model. Unfortunately this rarely works, and almost certainly guarantees that the FP rate will be higher than what's selected; if model A and model B have false positives for different sets of examples, then your actual FP rate could be the sum of their individual rates.
+
+To fix this, you need to fix a FP rate and then choose thresholds for each model that are complementary to one another. We include two example files that do this: ```size_two_portfolio.csv``` and ```size_three_portfolio.csv```. The rows in each of these CSVs specify the cutoffs and accuracy for each constituent model to ensure that they have a **total** of 1% FP rate.
